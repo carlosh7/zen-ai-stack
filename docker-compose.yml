@@ -81,10 +81,11 @@ services:
     ports:
       - "${HOST_PORT_COMFYUI:-8188}:8188"
     volumes:
-      - comfyui_models:/root/ComfyUI/models
+      - ./comfyui/models/checkpoints:/root/ComfyUI/models/checkpoints
       - ./comfyui/models/loras:/root/ComfyUI/models/loras
-      - comfyui_output:/root/ComfyUI/output
-      - comfyui_user:/root/ComfyUI/user
+      - ./comfyui/output:/root/ComfyUI/output
+      - ./comfyui/workflows:/root/ComfyUI/user/default/workflows
+      - comfyui_user:/root/ComfyUI/user/default
     environment:
       - CLI_ARGS=--cpu
     healthcheck:
@@ -103,8 +104,6 @@ volumes:
   portainer_data:
   ollama_data:
   open-webui_data:
-  comfyui_models:
-  comfyui_output:
   comfyui_user:
 
 networks:

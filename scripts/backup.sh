@@ -30,6 +30,11 @@ else
     warn "Could not backup portainer_data"
 fi
 
+log "Backing up ComfyUI assets (bind mounts)..."
+[ -d "$ZEN_DIR/comfyui/models" ] && tar czf "$BACKUP_DIR/comfyui_models.tar.gz" -C "$ZEN_DIR/comfyui" models/ 2>/dev/null && ok "comfyui models backed up" || warn "Could not backup comfyui models"
+[ -d "$ZEN_DIR/comfyui/output" ] && tar czf "$BACKUP_DIR/comfyui_output.tar.gz" -C "$ZEN_DIR/comfyui" output/ 2>/dev/null && ok "comfyui output backed up" || warn "Could not backup comfyui output"
+[ -d "$ZEN_DIR/comfyui/workflows" ] && tar czf "$BACKUP_DIR/comfyui_workflows.tar.gz" -C "$ZEN_DIR/comfyui" workflows/ 2>/dev/null && ok "comfyui workflows backed up" || warn "Could not backup comfyui workflows"
+
 log "Backing up configuration files..."
 [ -f "$ZEN_DIR/.env" ] && cp "$ZEN_DIR/.env" "$BACKUP_DIR/" && ok ".env backed up"
 [ -f "$HOME/.config/opencode/opencode.json" ] && cp "$HOME/.config/opencode/opencode.json" "$BACKUP_DIR/" && ok "opencode.json backed up"
