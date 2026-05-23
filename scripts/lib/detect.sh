@@ -59,15 +59,11 @@ detect_tools() {
     TOOLS_GIT=false
     TOOLS_CODE=false
     TOOLS_OPENCODE=false
-    TOOLS_NODE=false
-    TOOLS_PYTHON3=false
 
     command -v docker &>/dev/null && TOOLS_DOCKER=true
     command -v git &>/dev/null && TOOLS_GIT=true
     command -v code &>/dev/null && TOOLS_CODE=true
     [ -f "$HOME/.opencode/bin/opencode" ] && TOOLS_OPENCODE=true
-    command -v node &>/dev/null && TOOLS_NODE=true
-    command -v python3 &>/dev/null && TOOLS_PYTHON3=true
 
     log "Tools detected: docker=$TOOLS_DOCKER git=$TOOLS_GIT vscode=$TOOLS_CODE opencode=$TOOLS_OPENCODE"
 }

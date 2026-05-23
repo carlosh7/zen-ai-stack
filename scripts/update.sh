@@ -29,7 +29,11 @@ pull_models "$OLLAMA_MODELS"
 
 log "Updating OpenCode..."
 if [ -f "$HOME/.opencode/bin/opencode" ]; then
-    curl -fsSL https://opencode.ai/install | bash 2>/dev/null && ok "OpenCode updated" || warn "OpenCode update failed"
+    if curl -fsSL https://opencode.ai/install | bash 2>/dev/null; then
+        ok "OpenCode updated"
+    else
+        warn "OpenCode update failed"
+    fi
 fi
 
 ok "zen-ai-stack updated successfully"

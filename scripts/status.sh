@@ -8,6 +8,8 @@ export ZEN_DIR ZEN_SCRIPT_DIR
 
 source "$ZEN_SCRIPT_DIR/lib/common.sh"
 
+zen_status=""
+
 echo "┌─────────────────────────────────────────────────────────┐"
 echo "│ zen-ai-stack status                                    │"
 echo "├─────────────────────────────────────────────────────────┤"
@@ -16,9 +18,8 @@ echo "├───────────────────────�
 echo "│ Services:                                              │"
 for service in "zen-portainer" "zen-ollama" "zen-open-webui" "zen-comfyui"; do
     if docker ps --format '{{.Names}} {{.Status}}' 2>/dev/null | grep -q "$service"; then
-        local status
-        status=$(docker ps --filter "name=$service" --format '{{.Status}}')
-        echo -e "│  ${GREEN}✅${NC} ${service}  ${status}" | head -c 60
+        zen_status=$(docker ps --filter "name=$service" --format '{{.Status}}')
+        echo -e "│  ${GREEN}✅${NC} ${service}  ${zen_status}" | head -c 60
         echo
     else
         echo -e "│  ${RED}❌${NC} ${service}  not running"
@@ -44,7 +45,7 @@ fi
 echo "├─────────────────────────────────────────────────────────┤"
 echo "│ Ports:                                                  │"
 for port in 11434 3000 8188 9443; do
-    local svc=""
+    svc=""
     case "$port" in
         11434) svc="Ollama" ;;
         3000) svc="Open WebUI" ;;

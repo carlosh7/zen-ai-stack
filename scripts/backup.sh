@@ -14,9 +14,21 @@ log "Backing up to: ${BACKUP_DIR}"
 mkdir -p "$BACKUP_DIR"
 
 log "Backing up Docker volumes..."
-docker run --rm -v ollama_data:/data -v "${BACKUP_DIR}:/backup" alpine tar czf /backup/ollama_data.tar.gz -C /data . 2>/dev/null && ok "ollama_data backed up" || warn "Could not backup ollama_data"
-docker run --rm -v open-webui_data:/data -v "${BACKUP_DIR}:/backup" alpine tar czf /backup/open-webui_data.tar.gz -C /data . 2>/dev/null && ok "open-webui_data backed up" || warn "Could not backup open-webui_data"
-docker run --rm -v portainer_data:/data -v "${BACKUP_DIR}:/backup" alpine tar czf /backup/portainer_data.tar.gz -C /data . 2>/dev/null && ok "portainer_data backed up" || warn "Could not backup portainer_data"
+if docker run --rm -v ollama_data:/data -v "${BACKUP_DIR}:/backup" alpine tar czf /backup/ollama_data.tar.gz -C /data . 2>/dev/null; then
+    ok "ollama_data backed up"
+else
+    warn "Could not backup ollama_data"
+fi
+if docker run --rm -v open-webui_data:/data -v "${BACKUP_DIR}:/backup" alpine tar czf /backup/open-webui_data.tar.gz -C /data . 2>/dev/null; then
+    ok "open-webui_data backed up"
+else
+    warn "Could not backup open-webui_data"
+fi
+if docker run --rm -v portainer_data:/data -v "${BACKUP_DIR}:/backup" alpine tar czf /backup/portainer_data.tar.gz -C /data . 2>/dev/null; then
+    ok "portainer_data backed up"
+else
+    warn "Could not backup portainer_data"
+fi
 
 log "Backing up configuration files..."
 [ -f "$ZEN_DIR/.env" ] && cp "$ZEN_DIR/.env" "$BACKUP_DIR/" && ok ".env backed up"

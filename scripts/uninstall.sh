@@ -25,7 +25,11 @@ fi
 
 log "Stopping Docker stack..."
 cd "$ZEN_DIR"
-docker compose down -v 2>/dev/null && ok "Docker stack stopped and volumes removed" || warn "No Docker stack found"
+if docker compose down -v 2>/dev/null; then
+    ok "Docker stack stopped and volumes removed"
+else
+    warn "No Docker stack found"
+fi
 
 log "Removing OpenCode config..."
 if [ -f "$HOME/.config/opencode/opencode.json.bak" ]; then

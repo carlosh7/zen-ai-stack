@@ -56,7 +56,11 @@ install_opencode() {
         version=$("$HOME/.opencode/bin/opencode" --version 2>/dev/null || echo "unknown")
         ok "OpenCode already installed (v${version})"
         log "Updating OpenCode..."
-        curl -fsSL https://opencode.ai/install | bash 2>/dev/null && ok "OpenCode updated" || warn "OpenCode update failed"
+        if curl -fsSL https://opencode.ai/install | bash 2>/dev/null; then
+            ok "OpenCode updated"
+        else
+            warn "OpenCode update failed"
+        fi
         return 0
     fi
     log "Installing OpenCode..."
@@ -70,7 +74,11 @@ install_antigravity() {
         return 0
     fi
     log "Installing Antigravity CLI..."
-    curl -fsSL https://antigravity.google/cli/install.sh | bash 2>/dev/null && ok "Antigravity CLI installed" || warn "Antigravity installation failed"
+    if curl -fsSL https://antigravity.google/cli/install.sh | bash 2>/dev/null; then
+        ok "Antigravity CLI installed"
+    else
+        warn "Antigravity installation failed"
+    fi
 }
 
 install_vtracer() {
@@ -79,7 +87,11 @@ install_vtracer() {
         return 0
     fi
     log "Installing VTracer..."
-    pip3 install vtracer 2>/dev/null && ok "VTracer installed" || warn "VTracer not installed (pip3 not found)"
+    if pip3 install vtracer 2>/dev/null; then
+        ok "VTracer installed"
+    else
+        warn "VTracer not installed (pip3 not found)"
+    fi
 }
 
 install_inkscape() {
@@ -89,7 +101,11 @@ install_inkscape() {
     fi
     log "Installing Inkscape..."
     check_sudo
-    sudo apt install -y inkscape 2>/dev/null && ok "Inkscape installed" || warn "Inkscape not installed"
+    if sudo apt install -y inkscape 2>/dev/null; then
+        ok "Inkscape installed"
+    else
+        warn "Inkscape not installed"
+    fi
 }
 
 install_screenshot_to_code() {
@@ -99,8 +115,7 @@ install_screenshot_to_code() {
         return 0
     fi
     log "Cloning screenshot-to-code..."
-    git clone https://github.com/abi/screenshot-to-code.git "$target_dir" 2>/dev/null
-    if [ $? -eq 0 ]; then
+    if git clone https://github.com/abi/screenshot-to-code.git "$target_dir" 2>/dev/null; then
         cat > "$target_dir/.env" << 'EOF'
 OPENAI_API_KEY=ollama
 OPENAI_BASE_URL=http://host.docker.internal:11434/v1

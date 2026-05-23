@@ -55,7 +55,9 @@ pull_model() {
 
 pull_models() {
     local models=$1
-    local IFS=',' read -ra model_list <<< "$models"
+    local IFS
+    IFS=','
+    read -ra model_list <<< "$models"
     local total=${#model_list[@]}
     local current=0
     log "Pulling ${total} models..."

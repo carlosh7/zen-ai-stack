@@ -18,7 +18,8 @@ init_log() {
 }
 
 log() {
-    local msg="[$(date '+%H:%M:%S')] $*"
+    local msg
+    msg="[$(date '+%H:%M:%S')] $*"
     echo -e "${BLUE}ℹ️${NC} $*"
     echo "$msg" >> "$LOG_FILE"
 }

@@ -1,71 +1,72 @@
 # Plan — zen-ai-stack
 
 ## Status
-- Phase: Implementation
+- Phase: Validation — Scripts validated with shellcheck + bash -n
 - Version: 0.1.0
 
 ## Phases
 
-### Phase 1: Core Infrastructure
+### Phase 1: Core Infrastructure ✅
 - [x] Create directory structure
 - [x] docker-compose.yml (4 services: portainer, ollama, open-webui, comfyui)
 - [x] .env.example with defaults
 - [x] .gitignore
-- [ ] GitHub repo created and pushed
+- [x] GitHub repo created and pushed
 
-### Phase 2: Core Scripts
-- [ ] scripts/lib/common.sh (log, die, colors, spinner, progress)
-- [ ] scripts/lib/detect.sh (OS, RAM, disk, ports, tools)
-- [ ] scripts/lib/install.sh (installers per tool)
-- [ ] scripts/lib/docker.sh (Docker helpers, pull models)
-- [ ] scripts/setup.sh (main orchestrator)
-- [ ] scripts/update.sh (update everything)
-- [ ] scripts/uninstall.sh (clean removal)
-- [ ] scripts/status.sh (verify all services)
-- [ ] scripts/backup.sh (backup configurations)
+### Phase 2: Core Scripts ✅
+- [x] scripts/lib/common.sh (log, die, colors, spinner, progress)
+- [x] scripts/lib/detect.sh (OS, RAM, disk, ports, tools)
+- [x] scripts/lib/install.sh (installers per tool)
+- [x] scripts/lib/docker.sh (Docker helpers, pull models)
+- [x] scripts/setup.sh (main orchestrator)
+- [x] scripts/update.sh (update everything)
+- [x] scripts/uninstall.sh (clean removal)
+- [x] scripts/status.sh (verify all services)
+- [x] scripts/backup.sh (backup configurations)
+- [x] Validated with shellcheck + bash -n (zero errors)
 
-### Phase 3: Configurations
-- [ ] configs/opencode/ollama-provider.tpl
-- [ ] configs/vscode/continue-config.tpl
-- [ ] configs/open-webui/comfyui-env.tpl
+### Phase 3: Configurations ✅
+- [x] configs/opencode/ollama-provider.tpl
+- [x] configs/vscode/continue-config.tpl
+- [x] configs/open-webui/comfyui-env.tpl
 
-### Phase 4: Profiles
-- [ ] bare profile (Docker + Ollama + 1 model)
-- [ ] standard profile (default)
-- [ ] full profile (+ ComfyUI + CodeNest + screenshot-to-code)
-- [ ] --skip-* flags
+### Phase 4: Profiles ✅
+- [x] bare profile (Docker + Ollama + 1 model)
+- [x] standard profile (default)
+- [x] full profile (+ ComfyUI + CodeNest + screenshot-to-code)
+- [x] --skip-* flags
 
-### Phase 5: Makefile
-- [ ] Targets: setup, status, logs, update, stop, start, restart, uninstall, backup, version
+### Phase 5: Makefile ✅
+- [x] Targets: setup, status, logs, update, stop, start, restart, uninstall, backup, version
 
-### Phase 6: Documentation
+### Phase 6: Documentation ✅
 - [x] ARCHITECTURE.md
 - [x] PLAN.md
-- [ ] ROADMAP.md
-- [ ] AGENTS.md
-- [ ] README.md
-- [ ] CHANGELOG.md
-- [ ] CONTRIBUTING.md
-- [ ] SECURITY.md
-- [ ] docs/GUIDE_QUICKSTART.md
-- [ ] docs/GUIDE_CODE.md
-- [ ] docs/GUIDE_LOGOS.md
-- [ ] docs/GUIDE_WEB.md
-- [ ] docs/GUIDE_MOBILE.md
-- [ ] docs/GUIDE_WRITING.md
-- [ ] docs/GUIDE_RAG.md
-- [ ] docs/GUIDE_CODENEST.md
-- [ ] docs/GUIDE_MAINTENANCE.md
-- [ ] docs/GUIDE_DESIGN.md
-- [ ] docs/WINDOWS.md
-- [ ] docs/PROFILES.md
-- [ ] docs/TROUBLESHOOTING.md
-- [ ] docs/FAQ.md
+- [x] ROADMAP.md
+- [x] AGENTS.md
+- [x] README.md (bilingual)
+- [x] CHANGELOG.md
+- [x] CONTRIBUTING.md
+- [x] SECURITY.md
+- [x] docs/GUIDE_QUICKSTART.md
+- [x] docs/GUIDE_CODE.md
+- [x] docs/GUIDE_LOGOS.md
+- [x] docs/GUIDE_WEB.md
+- [x] docs/GUIDE_MOBILE.md
+- [x] docs/GUIDE_WRITING.md
+- [x] docs/GUIDE_RAG.md
+- [x] docs/GUIDE_CODENEST.md
+- [x] docs/GUIDE_MAINTENANCE.md
+- [x] docs/GUIDE_DESIGN.md
+- [x] docs/WINDOWS.md
+- [x] docs/PROFILES.md
+- [x] docs/TROUBLESHOOTING.md
+- [x] docs/FAQ.md
 
-### Phase 7: CI and Quality
-- [ ] .github/workflows/test.yml (shellcheck)
-- [ ] VERSION file
-- [ ] LICENSE
+### Phase 7: CI and Quality ✅
+- [x] .github/workflows/test.yml (shellcheck)
+- [x] VERSION file
+- [x] LICENSE
 
 ## Dependencies
 - docker-compose.yml → Phase 1 (no scripts needed)
