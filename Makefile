@@ -1,5 +1,7 @@
 .PHONY: setup status logs update stop start restart uninstall backup version help
 
+SERVICES = ollama open-webui portainer comfyui
+
 setup:
 	./scripts/setup.sh
 
@@ -7,16 +9,16 @@ status:
 	./scripts/status.sh
 
 logs:
-	docker compose --profile standard logs -f
+	docker compose logs -f $(SERVICES)
 
 update:
 	./scripts/update.sh
 
 stop:
-	docker compose --profile standard down
+	docker compose down $(SERVICES)
 
 start:
-	docker compose --profile standard up -d
+	docker compose up -d $(SERVICES)
 
 restart: stop start
 
