@@ -1,0 +1,116 @@
+x-common: &common
+  networks:
+    - zen-ai-stack
+  restart: unless-stopped
+
+services:
+  portainer:
+    container_name: zen-portainer
+    image: portainer/portainer-ce:lts
+    ports:
+      - "${HOST_PORT_PORTAINER:-9443}:9443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "https://localhost:9443/api/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    <<: *common
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+  ollama:
+    container_name: zen-ollama
+    image: ollama/ollama:latest
+    ports:
+      - "${HOST_PORT_OLLAMA:-11434}:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:11434/api/tags"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    <<: *common
+    deploy:
+      resources:
+        limits:
+          memory: 12G
+
+  open-webui:
+    container_name: zen-open-webui
+    image: ghcr.io/open-webui/open-webui:latest
+    ports:
+      - "${HOST_PORT_OPENWEBUI:-3000}:8080"
+    volumes:
+      - open-webui_data:/app/backend/data
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - WEBUI_SECRET_KEY=${WEBUI_SECRET_KEY:-}
+      - ENABLE_IMAGE_GENERATION=${ENABLE_IMAGE_GENERATION:-true}
+      - IMAGE_GENERATION_ENGINE=${IMAGE_GENERATION_ENGINE:-comfyui}
+      - COMFYUI_BASE_URL=${COMFYUI_BASE_URL:-http://comfyui:8188}
+      - IMAGE_SIZE=${IMAGE_SIZE:-1024x1024}
+      - IMAGE_STEPS=${IMAGE_STEPS:-30}
+      - ENABLE_IMAGE_PROMPT_GENERATION=${ENABLE_IMAGE_PROMPT_GENERATION:-true}
+      - USER_PERMISSIONS_FEATURES_IMAGE_GENERATION=${USER_PERMISSIONS_FEATURES_IMAGE_GENERATION:-true}
+    depends_on:
+      ollama:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    <<: *common
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+
+  comfyui:
+    container_name: zen-comfyui
+    image: yanwk/comfyui-boot:latest
+    ports:
+      - "${HOST_PORT_COMFYUI:-8188}:8188"
+    volumes:
+      - comfyui_models:/workspace/app/models
+      - comfyui_loras:/workspace/app/models/loras
+      - comfyui_output:/workspace/app/output
+      - comfyui_custom_nodes:/workspace/app/custom_nodes
+      - comfyui_user:/workspace/app/user
+    environment:
+      - CLI_ARGS=--force-fp16 --lowvram-mode
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8188"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    <<: *common
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+
+volumes:
+  portainer_data:
+  ollama_data:
+  open-webui_data:
+  comfyui_models:
+  comfyui_loras:
+  comfyui_output:
+  comfyui_custom_nodes:
+  comfyui_user:
+
+networks:
+  zen-ai-stack:
+    name: zen-ai-stack
+    driver: bridge

@@ -1,0 +1,9 @@
+.env
+*.log
+*.bak
+.DS_Store
+__pycache__/
+node_modules/
+tools/screenshot-to-code/
+tools/pix2code/
+comfyui/
