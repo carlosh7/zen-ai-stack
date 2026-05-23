@@ -86,7 +86,7 @@ phase_docker() {
 }
 
 phase_stack() {
-    # Ensure .env exists
+    local compose_profile=""
     if [ ! -f "$ZEN_DIR/.env" ]; then
         if [ -f "$ZEN_DIR/.env.example" ]; then
             cp "$ZEN_DIR/.env.example" "$ZEN_DIR/.env"
@@ -94,7 +94,12 @@ phase_stack() {
             warn "Edit .env to set WEBUI_SECRET_KEY and other values"
         fi
     fi
-    compose_up "$ZEN_DIR/docker-compose.yml"
+    case "$PROFILE" in
+        bare) compose_profile="" ;;
+        standard) compose_profile="standard" ;;
+        full) compose_profile="full" ;;
+    esac
+    compose_up "$ZEN_DIR/docker-compose.yml" "$compose_profile"
 }
 
 phase_models() {

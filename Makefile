@@ -7,16 +7,16 @@ status:
 	./scripts/status.sh
 
 logs:
-	docker compose logs -f
+	docker compose --profile standard logs -f
 
 update:
 	./scripts/update.sh
 
 stop:
-	docker compose down
+	docker compose --profile standard down
 
 start:
-	docker compose up -d
+	docker compose --profile standard up -d
 
 restart: stop start
 

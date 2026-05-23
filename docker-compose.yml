@@ -43,9 +43,38 @@ services:
         limits:
           memory: 12G
 
+  comfyui:
+    container_name: zen-comfyui
+    image: yanwk/comfyui-boot:cpu
+    profiles:
+      - full
+    ports:
+      - "${HOST_PORT_COMFYUI:-8188}:8188"
+    volumes:
+      - comfyui_models:/root/ComfyUI/models
+      - ./comfyui/models/loras:/root/ComfyUI/models/loras
+      - comfyui_output:/root/ComfyUI/output
+      - comfyui_user:/root/ComfyUI/user
+    environment:
+      - CLI_ARGS=--cpu
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8188"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    <<: *common
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+
   open-webui:
     container_name: zen-open-webui
     image: ghcr.io/open-webui/open-webui:latest
+    profiles:
+      - standard
+      - full
     ports:
       - "${HOST_PORT_OPENWEBUI:-3000}:8080"
     volumes:
@@ -75,39 +104,12 @@ services:
         limits:
           memory: 1G
 
-  comfyui:
-    container_name: zen-comfyui
-    image: yanwk/comfyui-boot:latest
-    ports:
-      - "${HOST_PORT_COMFYUI:-8188}:8188"
-    volumes:
-      - comfyui_models:/workspace/app/models
-      - ./comfyui/models/loras:/workspace/app/models/loras
-      - comfyui_output:/workspace/app/output
-      - comfyui_custom_nodes:/workspace/app/custom_nodes
-      - comfyui_user:/workspace/app/user
-    environment:
-      - CLI_ARGS=--force-fp16 --lowvram-mode
-    healthcheck:
-      test: ["CMD", "curl", "-sf", "http://localhost:8188"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
-    <<: *common
-    deploy:
-      resources:
-        limits:
-          memory: 8G
-
 volumes:
   portainer_data:
   ollama_data:
   open-webui_data:
   comfyui_models:
-  # comfyui_loras: (replaced by bind mount ./comfyui/models/loras)
   comfyui_output:
-  comfyui_custom_nodes:
   comfyui_user:
 
 networks:

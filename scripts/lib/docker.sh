@@ -6,9 +6,14 @@ source "${ZEN_SCRIPT_DIR}/lib/common.sh"
 
 compose_up() {
     local compose_file="${1:-$ZEN_DIR/docker-compose.yml}"
+    local profile="${2:-}"
     log "Starting Docker stack..."
     cd "$(dirname "$compose_file")"
-    docker compose up -d 2>&1 | while IFS= read -r line; do log "$line"; done
+    if [ -n "$profile" ]; then
+        docker compose --profile "$profile" up -d 2>&1 | while IFS= read -r line; do log "$line"; done
+    else
+        docker compose up -d 2>&1 | while IFS= read -r line; do log "$line"; done
+    fi
     ok "Docker stack started"
 }
 
