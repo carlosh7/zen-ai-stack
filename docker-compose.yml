@@ -114,5 +114,4 @@ volumes:
 
 networks:
   zen-ai-stack:
-    name: zen-ai-stack
-    driver: bridge
+    external: true

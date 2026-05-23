@@ -26,23 +26,35 @@ compose_down() {
 }
 
 wait_for_ollama() {
-    local timeout=${1:-120}
+    local timeout=${1:-180}
     local elapsed=0
-    log "Waiting for Ollama to be ready..."
-    while ! curl -sf http://localhost:11434/api/tags &>/dev/null; do
-        sleep 2
-        elapsed=$((elapsed + 2))
+    log "Waiting for Ollama container to be healthy..."
+    while true; do
+        local container_status
+        container_status=$(docker inspect --format='{{.State.Health.Status}}' zen-ollama 2>/dev/null || echo "not_found")
+        if [ "$container_status" = "healthy" ]; then
+            ok "Ollama is healthy"
+            sleep 5
+            return 0
+        fi
+        sleep 5
+        elapsed=$((elapsed + 5))
         if [ "$elapsed" -ge "$timeout" ]; then
+            warn "Ollama health check timed out. Trying API directly..."
+            if curl -sf http://localhost:11434/api/tags &>/dev/null; then
+                ok "Ollama API responds"
+                return 0
+            fi
             die "Ollama did not start within ${timeout}s"
         fi
-        progress_bar $((elapsed / 2)) $((timeout / 2)) "Ollama starting..."
+        progress_bar $((elapsed / 5)) $((timeout / 5)) "Ollama starting..."
     done
     ok "Ollama is ready"
 }
 
 pull_model() {
     local model=$1
-    local max_retries=3
+    local max_retries=5
     local retry=0
     log "Pulling model: ${model}"
     while [ $retry -lt "$max_retries" ]; do
@@ -52,7 +64,7 @@ pull_model() {
         fi
         retry=$((retry + 1))
         warn "Retry $retry/$max_retries for model: ${model}"
-        sleep 5
+        sleep 10
     done
     warn "Failed to pull model: ${model}"
     return 1
