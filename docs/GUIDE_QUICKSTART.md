@@ -14,6 +14,12 @@
 6. **Open CodeNest** (if installed) at http://localhost:8000
 7. **Open VS Code** and start Continue with `Ctrl+I`
 
+### Offline Mode
+If you installed via `--offline`:
+- Docker images, Ollama models, LoRAs, and tools were loaded from the bundle
+- VS Code and Inkscape may need separate installation (`--skip-vscode` if not available)
+- All functionality is identical to online installation
+
 ## ES — Primeros 5 Minutos Después de Instalar
 
 1. **Abre Open WebUI** en http://localhost:3000
@@ -28,6 +34,12 @@
 6. **Abre CodeNest** (si está instalado) en http://localhost:8000
 7. **Abre VS Code** y usa Continue con `Ctrl+I`
 
+### Modo Offline
+Si instalaste con `--offline`:
+- Las imágenes Docker, modelos Ollama, LoRAs y herramientas se cargaron desde el bundle
+- VS Code e Inkscape pueden requerir instalación aparte (`--skip-vscode` si no están disponibles)
+- Toda la funcionalidad es idéntica a la instalación online
+
 ## Troubleshooting Quick / Solución Rápida
 
 | Problem / Problema | Solution / Solución |
@@ -35,3 +47,4 @@
 | Open WebUI not loading | `make logs` to check errors |
 | Models not responding | `curl http://localhost:11434/api/tags` |
 | Docker permission denied | Re-login or `sudo usermod -aG docker $USER` |
+| Bundle not detected | `tar xzf models-bundle.tar.gz` to extract manually |

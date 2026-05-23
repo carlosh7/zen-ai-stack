@@ -47,6 +47,21 @@ make backup
 # Backups are stored in ~/zen-ai-stack-backups/
 ```
 
+### Offline Bundle
+
+**Export bundle (share with others):**
+```bash
+make export-bundle
+# Creates models-bundle.tar.gz with all Docker images + models + tools
+# ~50 GB total. Share via USB drive, cloud, or torrent.
+```
+
+**Import bundle (install without internet):**
+```bash
+# Place models-bundle.tar.gz in zen-ai-stack folder, then:
+./scripts/setup.sh --offline
+```
+
 ### Cleanup
 
 **Remove unused Docker images:**
@@ -109,6 +124,21 @@ docker compose up -d
 ```bash
 make backup
 # Los respaldos se guardan en ~/zen-ai-stack-backups/
+```
+
+### Bundle Offline
+
+**Exportar bundle (compartir con otros):**
+```bash
+make export-bundle
+# Crea models-bundle.tar.gz con imágenes Docker + modelos + herramientas
+# ~50 GB. Comparte via USB, nube o torrent.
+```
+
+**Importar bundle (instalar sin internet):**
+```bash
+# Coloca models-bundle.tar.gz en la carpeta de zen-ai-stack, luego:
+./scripts/setup.sh --offline
 ```
 
 ### Limpieza

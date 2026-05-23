@@ -57,12 +57,24 @@
 
 ## ⚡ Quick Install / Instalación rápida
 
+### Online (requires internet)
 ```bash
 git clone https://github.com/carlosh7/zen-ai-stack.git
 cd zen-ai-stack
 cp .env.example .env
 ./scripts/setup.sh
 ```
+
+### Offline (no internet needed)
+```bash
+# 1. Extract pre-downloaded bundle in the project folder
+tar xzf models-bundle.tar.gz
+
+# 2. Run with --offline flag
+./scripts/setup.sh --offline
+```
+
+See [Offline Guide](docs/GUIDE_OFFLINE.md) for details on creating and sharing bundles.
 
 ### One-liner (coming soon)
 ```bash
@@ -116,6 +128,7 @@ make backup      # Backup configs / Respaldar configuración
 
 | Guide / Guía | Description / Descripción |
 |---|---|
+| [Offline](docs/GUIDE_OFFLINE.md) | Install without internet / Instalar sin internet |
 | [Quick Start](docs/GUIDE_QUICKSTART.md) | First 5 minutes after install |
 | [Code with AI](docs/GUIDE_CODE.md) | Programming with local models |
 | [Design Logos](docs/GUIDE_LOGOS.md) | Logo generation workflow |
