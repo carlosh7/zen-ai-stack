@@ -116,10 +116,6 @@ phase_opencode() {
     merge_opencode_config
 }
 
-phase_opencode_config() {
-    merge_opencode_config
-}
-
 merge_opencode_config() {
     local config_file="${OPENCODE_CONFIG:-$HOME/.config/opencode/opencode.json}"
     local backup_file="${config_file}.bak"
@@ -157,31 +153,35 @@ merge_opencode_config() {
 EOF
         ok "OpenCode config created"
     else
-        # Merge: add ollama provider if not present
         if ! grep -q '"ollama"' "$config_file" 2>/dev/null; then
             log "Adding Ollama provider to existing OpenCode config..."
-            # Simple merge: remove trailing }, add provider before last }
-            sed -i 's/}$/,/' "$config_file"
-            cat >> "$config_file" << 'EOF'
-  "provider": {
-    "ollama": {
-      "npm": "@ai-sdk/openai-compatible",
-      "name": "Ollama (local)",
-      "options": {
-        "baseURL": "http://localhost:11434/v1"
-      },
-      "models": {
-        "qwen2.5-coder:7b": {},
-        "qwen2.5-vl:7b": {},
-        "llama3.2:3b": {},
-        "nomic-embed-text": {},
-        "deepseek-coder-v2-lite:16b": {}
-      }
+            if command -v python3 &>/dev/null; then
+                python3 -c "
+import json
+with open('$config_file', 'r') as f:
+    config = json.load(f)
+config['provider'] = {
+    'ollama': {
+        'npm': '@ai-sdk/openai-compatible',
+        'name': 'Ollama (local)',
+        'options': {'baseURL': 'http://localhost:11434/v1'},
+        'models': {
+            'qwen2.5-coder:7b': {},
+            'qwen2.5-vl:7b': {},
+            'llama3.2:3b': {},
+            'nomic-embed-text': {},
+            'deepseek-coder-v2-lite:16b': {}
+        }
     }
-  }
 }
-EOF
-            ok "OpenCode config merged with local providers"
+with open('$config_file', 'w') as f:
+    json.dump(config, f, indent=2)
+    f.write('\n')
+"
+                ok "OpenCode config merged with local providers"
+            else
+                warn "python3 not found for JSON merge. Add provider manually."
+            fi
         else
             ok "OpenCode config already has Ollama provider"
         fi
@@ -281,8 +281,7 @@ main() {
     run_phase "Install Docker" phase_docker
     run_phase "Deploy Docker stack" phase_stack
     run_phase "Download models" phase_models
-    run_phase "Install OpenCode" phase_opencode
-    run_phase "Configure OpenCode" phase_opencode_config
+    run_phase "Install and configure OpenCode" phase_opencode
     run_phase "Install VS Code" phase_vscode
     run_phase "Install Antigravity" phase_antigravity
     if [ "$PROFILE" = "full" ]; then

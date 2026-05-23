@@ -82,7 +82,7 @@ services:
       - "${HOST_PORT_COMFYUI:-8188}:8188"
     volumes:
       - comfyui_models:/workspace/app/models
-      - comfyui_loras:/workspace/app/models/loras
+      - ./comfyui/models/loras:/workspace/app/models/loras
       - comfyui_output:/workspace/app/output
       - comfyui_custom_nodes:/workspace/app/custom_nodes
       - comfyui_user:/workspace/app/user
@@ -105,7 +105,7 @@ volumes:
   ollama_data:
   open-webui_data:
   comfyui_models:
-  comfyui_loras:
+  # comfyui_loras: (replaced by bind mount ./comfyui/models/loras)
   comfyui_output:
   comfyui_custom_nodes:
   comfyui_user:
