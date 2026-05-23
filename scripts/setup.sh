@@ -11,6 +11,7 @@ source "$ZEN_SCRIPT_DIR/lib/common.sh"
 source "$ZEN_SCRIPT_DIR/lib/detect.sh"
 source "$ZEN_SCRIPT_DIR/lib/install.sh"
 source "$ZEN_SCRIPT_DIR/lib/docker.sh"
+source "$ZEN_SCRIPT_DIR/lib/bundle.sh"
 
 PROFILE="standard"
 SKIP_VSCODE=false
@@ -18,6 +19,7 @@ SKIP_ANTIGRAVITY=false
 SKIP_CODENEST=false
 DRY_RUN=false
 INTERACTIVE=false
+OFFLINE_MODE=false
 
 # Services selected for this run
 SELECTED_SERVICES=()
@@ -33,12 +35,19 @@ parse_args() {
             --skip-codenest) SKIP_CODENEST=true ;;
             --dry-run) DRY_RUN=true ;;
             --interactive) INTERACTIVE=true ;;
+            --offline)
+                OFFLINE_MODE=true
+                if [ -n "${2:-}" ] && ! echo "$2" | grep -q "^--"; then
+                    bundle_set_dir "$2"
+                    shift
+                fi
+                ;;
             --version) cat "$ZEN_DIR/VERSION"; exit 0 ;;
             --help)
                 echo "zen-ai-stack setup.sh"
                 echo "Profiles: --bare (minimal), --standard (default), --full (everything)"
                 echo "Flags: --skip-vscode --skip-antigravity --skip-codenest"
-                echo "      --dry-run --interactive --version --help"
+                echo "      --offline [path] --dry-run --interactive --version --help"
                 exit 0
                 ;;
             *) die "Unknown option: $1" ;;
@@ -75,6 +84,9 @@ phase_detect() {
     detect_existing_portainer
     detect_tools
     detect_codenest || true
+    if [ "$OFFLINE_MODE" = true ] && ! bundle_detect "${BUNDLE_DIR:-}"; then
+        warn "Offline mode: no bundle found. Internet will be used."
+    fi
 }
 
 phase_git() {
@@ -135,6 +147,10 @@ phase_stack() {
     fi
 
     if [ ${#SELECTED_SERVICES[@]} -gt 0 ]; then
+        if [ "$OFFLINE_MODE" = true ] && [ -d "$BUNDLE_DIR" ] && [ -f "$BUNDLE_DIR/manifest.json" ]; then
+            log "Offline mode: loading Docker images from bundle..."
+            bundle_import_docker_images
+        fi
         compose_up "$ZEN_DIR/docker-compose.yml" "${SELECTED_SERVICES[@]}"
     else
         log "No services to start"
@@ -142,6 +158,11 @@ phase_stack() {
 }
 
 phase_models() {
+    if [ "$OFFLINE_MODE" = true ] && [ -d "$BUNDLE_DIR" ]; then
+        log "Offline mode: restoring Ollama models from bundle..."
+        bundle_import_ollama_models
+        return 0
+    fi
     if [ "$OLLAMA_ON_HOST" = false ]; then
         wait_for_ollama 180
     fi
@@ -157,7 +178,11 @@ phase_models() {
 }
 
 phase_opencode() {
-    install_opencode
+    if [ "$OFFLINE_MODE" = true ] && [ -d "$BUNDLE_DIR" ]; then
+        bundle_import_opencode
+    else
+        install_opencode
+    fi
     merge_opencode_config
 }
 
@@ -254,14 +279,22 @@ phase_design_tools() {
     fi
     install_vtracer
     install_inkscape
-    pull_loras "$ZEN_DIR/comfyui/models/loras"
+    if [ "$OFFLINE_MODE" = true ] && [ -d "$BUNDLE_DIR" ]; then
+        bundle_import_loras "$ZEN_DIR/comfyui/models/loras"
+    else
+        pull_loras "$ZEN_DIR/comfyui/models/loras"
+    fi
 }
 
 phase_screenshot_to_code() {
     if [ "$PROFILE" != "full" ]; then
         return 0
     fi
-    install_screenshot_to_code "$ZEN_DIR/tools/screenshot-to-code"
+    if [ "$OFFLINE_MODE" = true ] && [ -d "$BUNDLE_DIR" ]; then
+        bundle_import_tools
+    else
+        install_screenshot_to_code "$ZEN_DIR/tools/screenshot-to-code"
+    fi
 }
 
 phase_codenest() {
@@ -349,6 +382,10 @@ show_summary() {
         echo "│  ComfyUI     → http://localhost:${comfy_port}                         │"
     fi
     echo "│                                                         │"
+    if [ "$OFFLINE_MODE" = true ] && [ -n "$BUNDLE_DIR" ]; then
+        echo "│  Mode: OFFLINE (bundle: $(basename "$BUNDLE_DIR"))           │"
+        echo "│                                                         │"
+    fi
     echo "│  Commands:                                              │"
     echo "│  make status    — Check everything                      │"
     echo "│  make logs      — View live logs                        │"

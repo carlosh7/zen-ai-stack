@@ -1,4 +1,4 @@
-.PHONY: setup status logs update stop start restart uninstall backup version help
+.PHONY: setup status logs update stop start restart uninstall backup version help export-bundle import-bundle
 
 SERVICES = ollama open-webui portainer comfyui
 
@@ -28,18 +28,26 @@ uninstall:
 backup:
 	./scripts/backup.sh
 
+export-bundle:
+	./scripts/export-bundle.sh
+
+import-bundle:
+	./scripts/import-bundle.sh
+
 version:
 	@cat VERSION
 
 help:
 	@echo "zen-ai-stack commands:"
-	@echo "  make setup      — Install Stack"
-	@echo "  make status     — Check status of all services"
-	@echo "  make logs       — View live logs"
-	@echo "  make update     — Pull latest images + models"
-	@echo "  make stop       — Stop all services"
-	@echo "  make start      — Start all services"
-	@echo "  make restart    — Restart all services"
-	@echo "  make uninstall  — Remove everything"
-	@echo "  make backup     — Backup configurations"
-	@echo "  make version    — Show version"
+	@echo "  make setup          — Install Stack"
+	@echo "  make status         — Check status of all services"
+	@echo "  make logs           — View live logs"
+	@echo "  make update         — Pull latest images + models"
+	@echo "  make stop           — Stop all services"
+	@echo "  make start          — Start all services"
+	@echo "  make restart        — Restart all services"
+	@echo "  make uninstall      — Remove everything"
+	@echo "  make backup         — Backup configurations"
+	@echo "  make export-bundle  — Create offline installation bundle"
+	@echo "  make import-bundle  — Restore from offline bundle"
+	@echo "  make version        — Show version"
