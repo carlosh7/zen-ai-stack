@@ -184,6 +184,25 @@ phase_opencode() {
         install_opencode
     fi
     merge_opencode_config
+    install_opencode_wrapper
+}
+
+install_opencode_wrapper() {
+    local wrapper_src="$ZEN_SCRIPT_DIR/opencode.sh"
+    local wrapper_dst="$HOME/.local/bin/opencode"
+    mkdir -p "$HOME/.local/bin"
+    if [ -f "$wrapper_src" ]; then
+        cp "$wrapper_src" "$wrapper_dst"
+        chmod +x "$wrapper_dst"
+        ok "OpenCode wrapper installed to ~/.local/bin/opencode"
+        # Add to PATH if not already
+        if ! echo "$PATH" | grep -q "$HOME/.local/bin"; then
+            local shell_rc="$HOME/.bashrc"
+            [ -f "$HOME/.zshrc" ] && shell_rc="$HOME/.zshrc"
+            echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$shell_rc"
+            warn "Added ~/.local/bin to PATH in $shell_rc (re-login or source it)"
+        fi
+    fi
 }
 
 merge_opencode_config() {
