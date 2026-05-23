@@ -86,7 +86,6 @@ phase_docker() {
         install_docker
     fi
     check_docker_version
-    docker_ensure_network
 }
 
 phase_stack() {
