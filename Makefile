@@ -1,4 +1,4 @@
-.PHONY: setup status logs update stop start restart uninstall backup version help export-bundle import-bundle
+.PHONY: setup status logs update stop start restart uninstall backup version help export-bundle import-bundle manual
 
 SERVICES = ollama open-webui portainer comfyui
 
@@ -33,6 +33,11 @@ export-bundle:
 
 import-bundle:
 	./scripts/import-bundle.sh
+
+manual:
+	@echo "Create a manual from Markdown: pandoc file.md -o file.pdf"
+	@echo "Create a presentation: marp file.md --pdf -o file.pdf"
+	@echo "See docs/GUIDE_PRESENTATIONS.md for details"
 
 version:
 	@cat VERSION

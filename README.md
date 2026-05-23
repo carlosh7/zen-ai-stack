@@ -128,6 +128,7 @@ make backup      # Backup configs / Respaldar configuración
 
 | Guide / Guía | Description / Descripción |
 |---|---|
+| [Presentations](docs/GUIDE_PRESENTATIONS.md) | Create slides, manuals, guides / Crear presentaciones, manuales, guías |
 | [Offline](docs/GUIDE_OFFLINE.md) | Install without internet / Instalar sin internet |
 | [Quick Start](docs/GUIDE_QUICKSTART.md) | First 5 minutes after install |
 | [Code with AI](docs/GUIDE_CODE.md) | Programming with local models |
