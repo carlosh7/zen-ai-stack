@@ -23,7 +23,7 @@ zen-ai-stack offers three installation profiles to match your hardware and needs
 **Time:** ~45 min
 **Includes:**
 - Everything in bare
-- 4 Ollama models (qwen2.5-coder, qwen2.5-vl, llama3.2, nomic-embed)
+- 4 Ollama models (qwen2.5-coder, llama3.2-vision, llama3.2, nomic-embed)
 - Open WebUI (chat interface)
 - OpenCode + VS Code + Continue
 - Antigravity CLI
@@ -37,7 +37,7 @@ zen-ai-stack offers three installation profiles to match your hardware and needs
 **Time:** ~60 min
 **Includes:**
 - Everything in standard
-- 5th model (deepseek-coder-v2-lite:16b)
+- 5th model (deepseek-coder-v2:16b)
 - ComfyUI + 4 LoRAs
 - screenshot-to-code
 - VTracer + Inkscape
@@ -68,7 +68,7 @@ zen-ai-stack ofrece tres perfiles de instalación para adaptarse a tu hardware y
 **Tiempo:** ~45 min
 **Incluye:**
 - Todo lo de bare
-- 4 modelos Ollama (qwen2.5-coder, qwen2.5-vl, llama3.2, nomic-embed)
+- 4 modelos Ollama (qwen2.5-coder, llama3.2-vision, llama3.2, nomic-embed)
 - Open WebUI (interfaz de chat)
 - OpenCode + VS Code + Continue
 - Antigravity CLI
@@ -82,7 +82,7 @@ zen-ai-stack ofrece tres perfiles de instalación para adaptarse a tu hardware y
 **Tiempo:** ~60 min
 **Incluye:**
 - Todo lo de standard
-- 5º modelo (deepseek-coder-v2-lite:16b)
+- 5º modelo (deepseek-coder-v2:16b)
 - ComfyUI + 4 LoRAs
 - screenshot-to-code
 - VTracer + Inkscape

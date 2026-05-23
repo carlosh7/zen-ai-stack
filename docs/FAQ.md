@@ -28,7 +28,7 @@ A: Yes: `ollama pull <model-name>`
 A: Yes: `ollama rm <model-name>`
 
 **Q: Why 5 models?**
-A: Each model is specialized: coding (qwen2.5-coder), vision (qwen2.5-vl), fast (llama3.2), embeddings (nomic), complex code (deepseek-coder-v2-lite).
+A: Each model is specialized: coding (qwen2.5-coder), vision (llama3.2-vision), fast (llama3.2), embeddings (nomic), complex code (deepseek-coder-v2).
 
 ### Docker
 
@@ -77,7 +77,7 @@ R: Sí: `ollama pull <nombre-del-modelo>`
 R: Sí: `ollama rm <nombre-del-modelo>`
 
 **P: ¿Por qué 5 modelos?**
-R: Cada modelo está especializado: código (qwen2.5-coder), visión (qwen2.5-vl), rápido (llama3.2), embeddings (nomic), código complejo (deepseek-coder-v2-lite).
+R: Cada modelo está especializado: código (qwen2.5-coder), visión (llama3.2-vision), rápido (llama3.2), embeddings (nomic), código complejo (deepseek-coder-v2).
 
 ### Docker
 

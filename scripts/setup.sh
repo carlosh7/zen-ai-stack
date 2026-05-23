@@ -148,10 +148,10 @@ phase_models() {
 
     local models="qwen2.5-coder:7b"
     if [ "$PROFILE" = "standard" ] || [ "$PROFILE" = "full" ]; then
-        models="qwen2.5-coder:7b,qwen2.5-vl:7b,llama3.2:3b,nomic-embed-text"
+        models="qwen2.5-coder:7b,llama3.2-vision:11b,llama3.2:3b,nomic-embed-text"
     fi
     if [ "$PROFILE" = "full" ]; then
-        models="${models},deepseek-coder-v2-lite:16b"
+        models="${models},deepseek-coder-v2:16b"
     fi
     pull_models "$models"
 }
@@ -185,9 +185,10 @@ merge_opencode_config() {
       },
       "models": {
         "qwen2.5-coder:7b": {},
-        "qwen2.5-vl:7b": {},
+        "llama3.2-vision:11b": {},
         "llama3.2:3b": {},
-        "nomic-embed-text": {}
+        "nomic-embed-text": {},
+        "deepseek-coder-v2:16b": {}
       }
     }
   }
@@ -209,10 +210,10 @@ config['provider'] = {
         'options': {'baseURL': 'http://localhost:11434/v1'},
         'models': {
             'qwen2.5-coder:7b': {},
-            'qwen2.5-vl:7b': {},
+            'llama3.2-vision:11b': {},
             'llama3.2:3b': {},
             'nomic-embed-text': {},
-            'deepseek-coder-v2-lite:16b': {}
+            'deepseek-coder-v2:16b': {}
         }
     }
 }

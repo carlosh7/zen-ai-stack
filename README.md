@@ -150,10 +150,10 @@ make backup      # Backup configs / Respaldar configuración
 | Model | RAM (Q4) | Purpose / Propósito | Profile |
 |---|---|---|---|
 | `qwen2.5-coder:7b` | ~5 GB | Code + docs in Spanish | bare |
-| `qwen2.5-vl:7b` | ~6 GB | Vision (screenshots, mockups) | standard |
+| `llama3.2-vision:11b` | ~7.8 GB | Vision (screenshots, mockups) | standard |
 | `llama3.2:3b` | ~2.5 GB | Quick tasks | standard |
 | `nomic-embed-text` | ~0.5 GB | RAG embeddings | standard |
-| `deepseek-coder-v2-lite:16b` | ~10 GB | Complex mobile code (MoE) | full |
+| `deepseek-coder-v2:16b` | ~8.9 GB | Complex mobile code (MoE) | full |
 
 ---
 

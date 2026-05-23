@@ -29,7 +29,7 @@ opencode --model qwen2.5-coder:7b "Refactor this function:" < file.py
 
 ### Tips
 - `qwen2.5-coder:7b` is your best model for coding tasks
-- Use `deepseek-coder-v2-lite:16b` for complex multi-file projects
+- Use `deepseek-coder-v2:16b` for complex multi-file projects
 - For quick questions, use `llama3.2:3b` (fastest)
 
 ## ES
@@ -61,5 +61,5 @@ opencode --model qwen2.5-coder:7b "Refactoriza esta función:" < archivo.py
 
 ### Consejos
 - `qwen2.5-coder:7b` es tu mejor modelo para tareas de código
-- Usa `deepseek-coder-v2-lite:16b` para proyectos complejos multi-archivo
+- Usa `deepseek-coder-v2:16b` para proyectos complejos multi-archivo
 - Para preguntas rápidas, usa `llama3.2:3b` (el más rápido)

@@ -79,12 +79,13 @@ detect_ports_and_assign() {
 }
 
 detect_existing_ollama() {
-    if command -v ollama &>/dev/null; then
-        log "Ollama binary found on host"
-    fi
-    if curl -sf http://localhost:11434/api/tags &>/dev/null; then
+    OLLAMA_ON_HOST=false
+    if command -v ollama &>/dev/null && curl -sf http://localhost:11434/api/tags &>/dev/null; then
         OLLAMA_ON_HOST=true
-        warn "Ollama already listening on localhost:11434 (host). Container will be skipped."
+        warn "Ollama binary + API found on host. Container will be skipped."
+    elif curl -sf http://localhost:11434/api/tags &>/dev/null && ! docker ps --format '{{.Names}}' 2>/dev/null | grep -q zen-ollama; then
+        OLLAMA_ON_HOST=true
+        warn "Ollama API responding on host (not our container). Skipping container."
     else
         OLLAMA_ON_HOST=false
     fi

@@ -6,7 +6,7 @@
 - Qwen2.5-Coder 7B (for Flutter, Kotlin, Swift code)
 - Qwen2.5-VL 7B (for understanding screenshots)
 - ComfyUI + SDXL (for phone UI mockups)
-- deepseek-coder-v2-lite:16b (for complex mobile code)
+- deepseek-coder-v2:16b (for complex mobile code)
 
 ### Workflow
 
@@ -37,7 +37,7 @@ Prompt: "Create a Flutter widget for this user profile screen with:
 |---|---|---|
 | Flutter/Dart | qwen2.5-coder:7b | ollama run qwen2.5-coder:7b |
 | Kotlin/Jetpack | qwen2.5-coder:7b | ollama run qwen2.5-coder:7b |
-| Swift/SwiftUI | deepseek-coder-v2-lite | ollama run deepseek-coder-v2-lite:16b |
+| Swift/SwiftUI | deepseek-coder-v2:16b | ollama run deepseek-coder-v2:16b |
 | React Native | qwen2.5-coder:7b | ollama run qwen2.5-coder:7b |
 
 ### Tips
@@ -52,7 +52,7 @@ Prompt: "Create a Flutter widget for this user profile screen with:
 - Qwen2.5-Coder 7B (para código Flutter, Kotlin, Swift)
 - Qwen2.5-VL 7B (para entender capturas de pantalla)
 - ComfyUI + SDXL (para mockups de pantallas)
-- deepseek-coder-v2-lite:16b (para código mobile complejo)
+- deepseek-coder-v2:16b (para código mobile complejo)
 
 ### Flujo de Trabajo
 
@@ -83,7 +83,7 @@ Prompt: "Crea un widget de Flutter para esta pantalla de perfil con:
 |---|---|---|
 | Flutter/Dart | qwen2.5-coder:7b | ollama run qwen2.5-coder:7b |
 | Kotlin/Jetpack | qwen2.5-coder:7b | ollama run qwen2.5-coder:7b |
-| Swift/SwiftUI | deepseek-coder-v2-lite | ollama run deepseek-coder-v2-lite:16b |
+| Swift/SwiftUI | deepseek-coder-v2:16b | ollama run deepseek-coder-v2:16b |
 | React Native | qwen2.5-coder:7b | ollama run qwen2.5-coder:7b |
 
 ### Consejos

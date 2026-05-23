@@ -24,7 +24,7 @@ ok "Containers recreated"
 wait_for_ollama 120
 
 log "Updating models..."
-OLLAMA_MODELS="${OLLAMA_MODELS:-qwen2.5-coder:7b,qwen2.5-vl:7b,llama3.2:3b,nomic-embed-text}"
+OLLAMA_MODELS="${OLLAMA_MODELS:-qwen2.5-coder:7b,llama3.2-vision:11b,llama3.2:3b,nomic-embed-text}"
 pull_models "$OLLAMA_MODELS"
 
 log "Updating OpenCode..."
