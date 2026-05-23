@@ -9,24 +9,38 @@ export ZEN_DIR ZEN_SCRIPT_DIR
 source "$ZEN_SCRIPT_DIR/lib/common.sh"
 
 zen_status=""
+container=""
+name=""
+found=false
 
 echo "┌─────────────────────────────────────────────────────────┐"
 echo "│ zen-ai-stack status                                    │"
 echo "├─────────────────────────────────────────────────────────┤"
 
-# Docker services
 echo "│ Services:                                              │"
-for service in "zen-portainer" "zen-ollama" "zen-open-webui" "zen-comfyui"; do
-    if docker ps --format '{{.Names}} {{.Status}}' 2>/dev/null | grep -q "$service"; then
-        zen_status=$(docker ps --filter "name=$service" --format '{{.Status}}')
-        echo -e "│  ${GREEN}✅${NC} ${service}  ${zen_status}" | head -c 60
+for entry in "zen-portainer:Portainer" "zen-ollama:Ollama" "zen-open-webui:Open WebUI" "zen-comfyui:ComfyUI"; do
+    container="${entry%%:*}"
+    name="${entry#*:}"
+    if docker ps --format '{{.Names}} {{.Status}}' 2>/dev/null | grep -q "$container"; then
+        zen_status=$(docker ps --filter "name=$container" --format '{{.Status}}')
+        echo -e "│  ${GREEN}✅${NC} ${container}  ${zen_status}" | head -c 60
         echo
     else
-        echo -e "│  ${RED}❌${NC} ${service}  not running"
+        # Check if service is running on host
+        found=false
+        case "$container" in
+            zen-portainer) curl -sk https://localhost:9443 &>/dev/null && found=true ;;
+            zen-ollama) curl -sf http://localhost:11434/api/tags &>/dev/null && found=true ;;
+        esac
+        if [ "$found" = true ]; then
+            echo -e "│  ${GREEN}✅${NC} ${name}  (host)" | head -c 60
+            echo
+        else
+            echo -e "│  ${RED}❌${NC} ${name}  not running"
+        fi
     fi
 done
 
-# Ollama models
 echo "│                                                         │"
 echo "│ Models:                                                 │"
 if curl -sf http://localhost:11434/api/tags 2>/dev/null | python3 -c "

@@ -6,15 +6,16 @@ source "${ZEN_SCRIPT_DIR}/lib/common.sh"
 
 compose_up() {
     local compose_file="${1:-$ZEN_DIR/docker-compose.yml}"
-    local profile="${2:-}"
-    log "Starting Docker stack..."
+    shift 2>/dev/null || true
+    local services=("$@")
+    log "Starting Docker services: ${services[*]:-(all)}..."
     cd "$(dirname "$compose_file")"
-    if [ -n "$profile" ]; then
-        docker compose --profile "$profile" up -d 2>&1 | while IFS= read -r line; do log "$line"; done
+    if [ ${#services[@]} -gt 0 ]; then
+        docker compose up -d "${services[@]}" 2>&1 | while IFS= read -r line; do log "$line"; done
     else
         docker compose up -d 2>&1 | while IFS= read -r line; do log "$line"; done
     fi
-    ok "Docker stack started"
+    ok "Docker services started: ${services[*]:-(all)}"
 }
 
 compose_down() {
@@ -28,6 +29,10 @@ compose_down() {
 wait_for_ollama() {
     local timeout=${1:-180}
     local elapsed=0
+    if [ "${OLLAMA_ON_HOST:-false}" = true ]; then
+        log "Ollama running on host — skipping container wait"
+        return 0
+    fi
     log "Waiting for Ollama container to be healthy..."
     while true; do
         local container_status
@@ -36,6 +41,12 @@ wait_for_ollama() {
             ok "Ollama is healthy"
             sleep 5
             return 0
+        fi
+        if [ "$container_status" = "not_found" ]; then
+            if curl -sf http://localhost:11434/api/tags &>/dev/null; then
+                ok "Ollama API responds (host)"
+                return 0
+            fi
         fi
         sleep 5
         elapsed=$((elapsed + 5))
@@ -49,7 +60,6 @@ wait_for_ollama() {
         fi
         progress_bar $((elapsed / 5)) $((timeout / 5)) "Ollama starting..."
     done
-    ok "Ollama is ready"
 }
 
 pull_model() {
@@ -57,15 +67,28 @@ pull_model() {
     local max_retries=5
     local retry=0
     log "Pulling model: ${model}"
-    while [ $retry -lt "$max_retries" ]; do
-        if docker exec -i zen-ollama ollama pull "$model" 2>&1; then
-            ok "Model pulled: ${model}"
-            return 0
-        fi
-        retry=$((retry + 1))
-        warn "Retry $retry/$max_retries for model: ${model}"
-        sleep 10
-    done
+    if [ "${OLLAMA_ON_HOST:-false}" = true ]; then
+        log "Ollama on host — pulling directly"
+        while [ $retry -lt "$max_retries" ]; do
+            if ollama pull "$model" 2>&1; then
+                ok "Model pulled: ${model}"
+                return 0
+            fi
+            retry=$((retry + 1))
+            warn "Retry $retry/$max_retries for model: ${model}"
+            sleep 10
+        done
+    else
+        while [ $retry -lt "$max_retries" ]; do
+            if docker exec -i zen-ollama ollama pull "$model" 2>&1; then
+                ok "Model pulled: ${model}"
+                return 0
+            fi
+            retry=$((retry + 1))
+            warn "Retry $retry/$max_retries for model: ${model}"
+            sleep 10
+        done
+    fi
     warn "Failed to pull model: ${model}"
     return 1
 }
@@ -80,7 +103,7 @@ pull_models() {
     log "Pulling ${total} models..."
     for model in "${model_list[@]}"; do
         current=$((current + 1))
-        model=$(echo "$model" | xargs)  # trim whitespace
+        model=$(echo "$model" | xargs)
         progress_bar "$current" "$total" "Pulling ${model}..."
         pull_model "$model" &
     done
@@ -121,6 +144,8 @@ docker_ensure_network() {
     if ! docker network ls --format '{{.Name}}' | grep -q "^${network}$"; then
         docker network create "$network" >/dev/null
         ok "Docker network created: ${network}"
+    else
+        log "Docker network '${network}' already exists — reusing"
     fi
 }
 

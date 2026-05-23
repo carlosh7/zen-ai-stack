@@ -2,8 +2,14 @@
 # detect.sh — OS, hardware, and tool detection for zen-ai-stack
 set -euo pipefail
 
-# shellcheck source=scripts/lib/common.sh
 source "${ZEN_SCRIPT_DIR}/lib/common.sh"
+
+# Global state variables set by detect functions
+RAM_GB=0
+DISK_GB=0
+OLLAMA_ON_HOST=false
+PORTAINER_ON_HOST=false
+declare -A SERVICE_PORTS
 
 detect_os() {
     if [ -f /etc/os-release ]; then
@@ -45,13 +51,52 @@ detect_disk() {
     fi
 }
 
-detect_ports() {
-    local ports=(11434 3000 8188 9443 5173 7001)
-    for port in "${ports[@]}"; do
-        if ss -tlnp "sport = :$port" 2>/dev/null | grep -q "$port"; then
-            warn "Port $port is already in use"
+detect_ports_and_assign() {
+    local services_def=(
+        "portainer:9443:ZEN_PORTAINER_PORT"
+        "ollama:11434:ZEN_OLLAMA_PORT"
+        "open-webui:3000:ZEN_OPENWEBUI_PORT"
+        "comfyui:8188:ZEN_COMFYUI_PORT"
+    )
+    log "Checking port availability..."
+    for entry in "${services_def[@]}"; do
+        local svc="${entry%%:*}"
+        local rest="${entry#*:}"
+        local default_port="${rest%%:*}"
+        local env_var="${rest##*:}"
+        local assigned=$default_port
+        while ss -tlnp "sport = :$assigned" 2>/dev/null | grep -q "$assigned"; do
+            assigned=$((assigned + 1))
+        done
+        SERVICE_PORTS["$svc"]=$assigned
+        export "$env_var=$assigned"
+        if [ "$assigned" != "$default_port" ]; then
+            warn "${svc}: port ${default_port} in use → using ${assigned}"
+        else
+            ok "${svc}: using port ${assigned}"
         fi
     done
+}
+
+detect_existing_ollama() {
+    if command -v ollama &>/dev/null; then
+        log "Ollama binary found on host"
+    fi
+    if curl -sf http://localhost:11434/api/tags &>/dev/null; then
+        OLLAMA_ON_HOST=true
+        warn "Ollama already listening on localhost:11434 (host). Container will be skipped."
+    else
+        OLLAMA_ON_HOST=false
+    fi
+}
+
+detect_existing_portainer() {
+    if docker ps --format '{{.Names}}' 2>/dev/null | grep -q -E '^portainer$|^zen-portainer$'; then
+        PORTAINER_ON_HOST=true
+        warn "Portainer already running. Container will be skipped."
+    else
+        PORTAINER_ON_HOST=false
+    fi
 }
 
 detect_tools() {
@@ -69,7 +114,6 @@ detect_tools() {
 }
 
 detect_codenest() {
-    # Search common locations for CodeNest
     local locations=("$HOME/CodeNest" "$HOME/codenest" "$ZEN_DIR/../CodeNest")
     CODENEST_DIR=""
     for loc in "${locations[@]}"; do
@@ -80,13 +124,6 @@ detect_codenest() {
         fi
     done
     log "CodeNest not found"
-    return 1
-}
-
-detect_ollama_running() {
-    if curl -sf http://localhost:11434/api/tags &>/dev/null; then
-        return 0
-    fi
     return 1
 }
 
