@@ -167,6 +167,7 @@ make backup      # Backup configs / Respaldar configuración
 | `llama3.2:3b` | ~2.5 GB | Quick tasks | standard |
 | `nomic-embed-text` | ~0.5 GB | RAG embeddings | standard |
 | `deepseek-coder-v2:16b` | ~8.9 GB | Complex mobile code (MoE) | full |
+| `qwen2.5:14b` | ~9 GB | Creative writing, books / Escritura creativa, libros | full |
 
 ---
 
