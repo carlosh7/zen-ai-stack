@@ -14,21 +14,20 @@ log "Backing up to: ${BACKUP_DIR}"
 mkdir -p "$BACKUP_DIR"
 
 log "Backing up Docker volumes..."
-if docker run --rm -v ollama_data:/data -v "${BACKUP_DIR}:/backup" alpine tar czf /backup/ollama_data.tar.gz -C /data . 2>/dev/null; then
-    ok "ollama_data backed up"
-else
-    warn "Could not backup ollama_data"
-fi
-if docker run --rm -v open-webui_data:/data -v "${BACKUP_DIR}:/backup" alpine tar czf /backup/open-webui_data.tar.gz -C /data . 2>/dev/null; then
-    ok "open-webui_data backed up"
-else
-    warn "Could not backup open-webui_data"
-fi
-if docker run --rm -v portainer_data:/data -v "${BACKUP_DIR}:/backup" alpine tar czf /backup/portainer_data.tar.gz -C /data . 2>/dev/null; then
-    ok "portainer_data backed up"
-else
-    warn "Could not backup portainer_data"
-fi
+# Descubre los volúmenes reales del proyecto (los nombres llevan prefijo del
+# proyecto compose, ej: zen-ai-stack_ollama_data). Antes se usaban nombres
+# fijos sin prefijo y los backups salían vacíos reportando éxito.
+ZEN_PROJECT="${ZEN_PROJECT:-zen-ai-stack}"
+export ZEN_PROJECT
+while IFS= read -r vol; do
+    [ -z "$vol" ] && continue
+    short="${vol#"${ZEN_PROJECT}"_}"
+    if docker run --rm -v "$vol":/data -v "${BACKUP_DIR}:/backup" alpine tar czf "/backup/${short}.tar.gz" -C /data . 2>/dev/null; then
+        ok "${short} backed up (${vol})"
+    else
+        warn "Could not backup ${vol}"
+    fi
+done < <(docker volume ls --filter "label=com.docker.compose.project=${ZEN_PROJECT}" --format '{{.Name}}')
 
 log "Backing up ComfyUI assets (bind mounts)..."
 [ -d "$ZEN_DIR/comfyui/models" ] && tar czf "$BACKUP_DIR/comfyui_models.tar.gz" -C "$ZEN_DIR/comfyui" models/ 2>/dev/null && ok "comfyui models backed up" || warn "Could not backup comfyui models"

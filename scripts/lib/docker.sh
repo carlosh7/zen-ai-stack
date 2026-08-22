@@ -100,14 +100,28 @@ pull_models() {
     read -ra model_list <<< "$models"
     local total=${#model_list[@]}
     local current=0
+    local failed=0
+    local -a pids=() model_names=()
     log "Pulling ${total} models..."
     for model in "${model_list[@]}"; do
         current=$((current + 1))
         model=$(echo "$model" | xargs)
         progress_bar "$current" "$total" "Pulling ${model}..."
         pull_model "$model" &
+        pids+=($!)
+        model_names+=("$model")
     done
-    wait
+    local i
+    for i in "${!pids[@]}"; do
+        if ! wait "${pids[$i]}"; then
+            warn "Failed: ${model_names[$i]}"
+            failed=$((failed + 1))
+        fi
+    done
+    if [ "$failed" -gt 0 ]; then
+        warn "${failed}/${total} models failed to download"
+        return 1
+    fi
     progress_bar "$total" "$total" "All models pulled"
     ok "All models downloaded"
 }
